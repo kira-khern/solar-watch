@@ -1,13 +1,17 @@
-# Small, JRE-only base image (no full JDK needed to just run a built jar)
+
+FROM maven:3.9-eclipse-temurin-25 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY backend/src backend/src
+RUN mvn -B clean package -DskipTests
+
+
 FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /tmp
 
-# Copy the executable jar built by `mvn clean package` into the image
-COPY target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
-# Document that the app listens on 8080 inside the container (informational only,
-# doesn't actually publish the port - that happens with `docker run -p`)
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
