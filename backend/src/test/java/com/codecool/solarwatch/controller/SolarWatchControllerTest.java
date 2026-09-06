@@ -2,11 +2,14 @@ package com.codecool.solarwatch.controller;
 
 import com.codecool.solarwatch.dto.SolarWatchResponse;
 import com.codecool.solarwatch.exception.CityNotFoundException;
+import com.codecool.solarwatch.security.JwtService;
 import com.codecool.solarwatch.service.SolarWatchService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -19,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SolarWatchController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class SolarWatchControllerTest {
 
     @Autowired
@@ -26,6 +30,12 @@ class SolarWatchControllerTest {
 
     @MockBean
     private SolarWatchService solarWatchService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private AuthenticationProvider authenticationProvider;
 
     @Test
     void getSolarWatch_returns200AndBody_onValidRequest() throws Exception {
