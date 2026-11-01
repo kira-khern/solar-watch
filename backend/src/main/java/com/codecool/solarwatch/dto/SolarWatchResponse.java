@@ -1,6 +1,8 @@
 package com.codecool.solarwatch.dto;
 
 
+import com.codecool.solarwatch.dto.weather.WeatherInfo;
+
 public record SolarWatchResponse(
         String city,
         String country,
@@ -8,6 +10,7 @@ public record SolarWatchResponse(
         String sunriseUtc,
         String sunsetUtc,
         String sunriseLocal,
-        String sunsetLocal
+        String sunsetLocal,
+        WeatherInfo weather
 ) {
 }

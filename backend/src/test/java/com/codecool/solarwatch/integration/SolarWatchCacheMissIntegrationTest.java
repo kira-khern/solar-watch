@@ -78,6 +78,11 @@ class SolarWatchCacheMissIntegrationTest {
                         {"results":{"sunrise":"2026-06-21T20:12:00+00:00","sunset":"2026-06-21T10:45:00+00:00"},"status":"OK"}
                         """)
                 .addHeader("Content-Type", "application/json"));
+        geocodingServer.enqueue(new MockResponse()
+                .setBody("""
+                        {"weather":[{"description":"light rain","icon":"10d"}],"main":{"temp":15.2,"feels_like":14.6,"humidity":80},"wind":{"speed":5.4}}
+                        """)
+                .addHeader("Content-Type", "application/json"));
 
         String token = registerAndGetToken("cachemissuser", "secretPassword123");
         HttpHeaders headers = new HttpHeaders();
@@ -96,8 +101,10 @@ class SolarWatchCacheMissIntegrationTest {
         assertEquals("Tokyo", response.getBody().city());
         assertEquals("20:12:00", response.getBody().sunriseUtc());
         assertEquals("10:45:00", response.getBody().sunsetUtc());
+        assertNotNull(response.getBody().weather());
+        assertEquals("light rain", response.getBody().weather().description());
 
-        assertEquals(1, geocodingServer.getRequestCount());
+        assertEquals(2, geocodingServer.getRequestCount());
         assertEquals(1, sunriseSunsetServer.getRequestCount());
 
         City savedCity = cityRepository.findByName("Tokyo").orElseThrow();

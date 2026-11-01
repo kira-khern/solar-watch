@@ -2,6 +2,7 @@ package com.codecool.solarwatch.service;
 
 import com.codecool.solarwatch.dto.SolarWatchResponse;
 import com.codecool.solarwatch.dto.suntimes.SunTimes;
+import com.codecool.solarwatch.dto.weather.WeatherInfo;
 import com.codecool.solarwatch.model.City;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +18,18 @@ public class SolarWatchService {
 
     private final GeocodingService geocodingService;
     private final SunriseSunsetService sunriseSunsetService;
+    private final WeatherService weatherService;
 
-    public SolarWatchService(GeocodingService geocodingService, SunriseSunsetService sunriseSunsetService) {
+    public SolarWatchService(GeocodingService geocodingService, SunriseSunsetService sunriseSunsetService, WeatherService weatherService) {
         this.geocodingService = geocodingService;
         this.sunriseSunsetService = sunriseSunsetService;
+        this.weatherService = weatherService;
     }
 
     public SolarWatchResponse getSolarWatch(String cityName, LocalDate date, String timezone) {
         City city = geocodingService.getCity(cityName);
         SunTimes sunTimes = sunriseSunsetService.getSunTimes(city, date);
+        WeatherInfo weather = weatherService.getCurrentWeatherInfo(city);
 
         String sunriseUtc = sunTimes.sunriseUtc().format(TIME_FORMAT);
         String sunsetUtc = sunTimes.sunsetUtc().format(TIME_FORMAT);
@@ -39,7 +43,6 @@ public class SolarWatchService {
                 sunriseLocal = toZone(sunTimes.sunriseUtc(), zoneId);
                 sunsetLocal = toZone(sunTimes.sunsetUtc(), zoneId);
             } catch (Exception ex) {
-                // invalid timezone - fall back to UTC values
             }
         }
 
@@ -50,7 +53,8 @@ public class SolarWatchService {
                 sunriseUtc,
                 sunsetUtc,
                 sunriseLocal,
-                sunsetLocal
+                sunsetLocal,
+                weather
         );
     }
 

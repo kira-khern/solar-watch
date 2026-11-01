@@ -1,6 +1,7 @@
 package com.codecool.solarwatch.controller;
 
 import com.codecool.solarwatch.dto.SolarWatchResponse;
+import com.codecool.solarwatch.dto.weather.WeatherInfo;
 import com.codecool.solarwatch.exception.CityNotFoundException;
 import com.codecool.solarwatch.security.JwtService;
 import com.codecool.solarwatch.service.SolarWatchService;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,20 +29,21 @@ class SolarWatchControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private SolarWatchService solarWatchService;
 
-    @MockBean
+    @MockitoBean
     private JwtService jwtService;
 
-    @MockBean
+    @MockitoBean
     private AuthenticationProvider authenticationProvider;
 
     @Test
     void getSolarWatch_returns200AndBody_onValidRequest() throws Exception {
+        WeatherInfo weather = new WeatherInfo(21.5, 20.8, "clear sky", "01d", 55, 3.1);
         SolarWatchResponse response = new SolarWatchResponse(
                 "Budapest", "HU", "2026-08-09",
-                "04:12:00", "18:45:00", "06:12:00", "20:45:00");
+                "04:12:00", "18:45:00", "06:12:00", "20:45:00", weather);
 
         when(solarWatchService.getSolarWatch(eq("Budapest"), eq(LocalDate.of(2026, 8, 9)), any()))
                 .thenReturn(response);
