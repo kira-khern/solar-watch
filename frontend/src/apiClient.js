@@ -12,6 +12,12 @@ async function request(path, { method = "GET", body, token } = {}) {
         body: body ? JSON.stringify(body) : undefined,
     });
 
+    if (response.status === 401 && token) {
+        localStorage.removeItem("token");
+        window.location.assign("/login");
+        throw new Error("Your session has expired. Please log in again.");
+    }
+
     if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw new Error(errorBody.message || `Request failed with status ${response.status}`);
