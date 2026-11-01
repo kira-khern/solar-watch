@@ -31,8 +31,9 @@ function RegisterPage() {
     return (
         <div className="page-container">
             <div className="card">
+                <p className="brand">☀️ SolarWatch</p>
                 <h1>Create your account</h1>
-                <p className="subtitle">Track sunrise and sunset for any city.</p>
+                <p className="subtitle">Track sunrise, sunset and weather for any city.</p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { getSolarWatch } from "../apiClient";
 import { useAuth } from "../context/AuthContext.jsx";
+import SunArc from "../components/SunArc.jsx";
+import WeatherIcon from "../components/WeatherIcon.jsx";
 
 function SolarWatchPage() {
     const [city, setCity] = useState("");
@@ -9,7 +11,7 @@ function SolarWatchPage() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, logout } = useAuth();
+    const { logout, token } = useAuth();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -27,16 +29,18 @@ function SolarWatchPage() {
         }
     }
 
+    const weather = result?.weather;
+
     return (
         <div className="page-container">
-            <div className="card" style={{ maxWidth: 480 }}>
+            <div className="card" style={{ maxWidth: 460 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h1>SolarWatch</h1>
-                    <button onClick={logout} className="link-text" style={{ background: "none", border: "none", cursor: "pointer" }}>
+                    <button onClick={logout} className="btn-ghost">
                         Log out
                     </button>
                 </div>
-                <p className="subtitle">Find the sunrise and sunset time for any city.</p>
+                <p className="subtitle">Find the sunrise, sunset and current weather for any city.</p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -70,21 +74,46 @@ function SolarWatchPage() {
                 </form>
 
                 {result && (
-                    <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--color-border)" }}>
-                        <h2>{result.city}, {result.country}</h2>
-                        <p className="subtitle">{result.date}</p>
+                    <>
+                        <hr className="divider" />
 
-                        <div style={{ display: "flex", gap: 24 }}>
-                            <div>
-                                <p className="subtitle" style={{ marginBottom: 4 }}>Sunrise</p>
-                                <h2 style={{ color: "var(--color-primary-dark)" }}>{result.sunriseLocal}</h2>
-                            </div>
-                            <div>
-                                <p className="subtitle" style={{ marginBottom: 4 }}>Sunset</p>
-                                <h2 style={{ color: "var(--color-secondary)" }}>{result.sunsetLocal}</h2>
+                        <div className="result-header">
+                            <div className="result-location">
+                                <h2>{result.city}, {result.country}</h2>
+                                <p className="subtitle">{result.date}</p>
                             </div>
                         </div>
-                    </div>
+
+                        {weather && (
+                            <div className="result-current">
+                                <div>
+                                    <div className="result-temp">{Math.round(weather.temperatureCelsius)}°</div>
+                                    <div className="result-temp-meta">
+                                        Feels like {Math.round(weather.feelsLikeCelsius)}°
+                                    </div>
+                                </div>
+                                <div className="result-condition">
+                                    <WeatherIcon icon={weather.icon} description={weather.description} />
+                                    <span className="result-condition-text">{weather.description}</span>
+                                </div>
+                            </div>
+                        )}
+
+                        <SunArc sunriseLocal={result.sunriseLocal} sunsetLocal={result.sunsetLocal} />
+
+                        {weather && (
+                            <div className="stat-grid">
+                                <div className="stat-card">
+                                    <div className="stat-card-label">Humidity</div>
+                                    <div className="stat-card-value">{weather.humidityPercent}%</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-card-label">Wind</div>
+                                    <div className="stat-card-value">{weather.windSpeedMps} m/s</div>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

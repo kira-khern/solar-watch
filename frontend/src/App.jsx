@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -6,6 +7,13 @@ import LoginPage from "./pages/LoginPage";
 import SolarWatchPage from "./pages/SolarWatchPage";
 
 function App() {
+  
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const isNight = hour < 6 || hour >= 20;
+    document.documentElement.dataset.theme = isNight ? "night" : "day";
+  }, []);
+
   return (
       <AuthProvider>
         <BrowserRouter>

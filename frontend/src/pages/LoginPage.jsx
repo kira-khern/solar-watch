@@ -31,8 +31,9 @@ function LoginPage() {
   return (
     <div className="page-container">
       <div className="card">
+        <p className="brand">☀️ SolarWatch</p>
         <h1>Welcome back</h1>
-        <p className="subtitle">Log in to check today's sunrise and sunset.</p>
+        <p className="subtitle">Log in to check today's sunrise, sunset and weather.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
