@@ -3,6 +3,7 @@ package com.codecool.solarwatch.controller;
 import com.codecool.solarwatch.dto.auth.AuthResponse;
 import com.codecool.solarwatch.dto.auth.LoginRequest;
 import com.codecool.solarwatch.dto.auth.RegisterRequest;
+import com.codecool.solarwatch.exception.UsernameAlreadyExistsException;
 import com.codecool.solarwatch.model.Role;
 import com.codecool.solarwatch.model.User;
 import com.codecool.solarwatch.repository.UserRepository;
@@ -37,6 +38,10 @@ public class AuthController {
 
     @PostMapping("/register")
     public AuthResponse register(@RequestBody RegisterRequest request) {
+        if(userRepository.findByUsername(request.username()).isPresent()){
+            throw new UsernameAlreadyExistsException(request.username());
+        }
+
         User user = new User(
                 request.username(),
                 passwordEncoder.encode(request.password()),
