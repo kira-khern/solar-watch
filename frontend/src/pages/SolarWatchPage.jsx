@@ -29,7 +29,9 @@ function SolarWatchPage() {
         }
     }
 
-    const weather = result?.weather;
+    const todayStr = new Date().toISOString().split("T")[0];
+
+    const weather = result?.date === todayStr ? result?.weather : null;
 
     return (
         <div className="page-container">
@@ -40,7 +42,7 @@ function SolarWatchPage() {
                         Log out
                     </button>
                 </div>
-                <p className="subtitle">Find the sunrise, sunset and current weather for any city.</p>
+                <p className="subtitle">Find the sunrise, sunset for any city and date, plus live weather for today.</p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -84,19 +86,22 @@ function SolarWatchPage() {
                             </div>
                         </div>
 
-                        {weather && (
-                            <div className="result-current">
-                                <div>
-                                    <div className="result-temp">{Math.round(weather.temperatureCelsius)}°</div>
-                                    <div className="result-temp-meta">
-                                        Feels like {Math.round(weather.feelsLikeCelsius)}°
+                                                {weather && (
+                            <>
+                                <p className="result-label">Right now</p>
+                                <div className="result-current">
+                                    <div>
+                                        <div className="result-temp">{Math.round(weather.temperatureCelsius)}°</div>
+                                        <div className="result-temp-meta">
+                                            Feels like {Math.round(weather.feelsLikeCelsius)}°
+                                        </div>
+                                    </div>
+                                    <div className="result-condition">
+                                        <WeatherIcon icon={weather.icon} description={weather.description} />
+                                        <span className="result-condition-text">{weather.description}</span>
                                     </div>
                                 </div>
-                                <div className="result-condition">
-                                    <WeatherIcon icon={weather.icon} description={weather.description} />
-                                    <span className="result-condition-text">{weather.description}</span>
-                                </div>
-                            </div>
+                            </>
                         )}
 
                         <SunArc sunriseLocal={result.sunriseLocal} sunsetLocal={result.sunsetLocal} />

@@ -303,6 +303,15 @@ hr.divider {
     margin-bottom: 0;
 }
 
+.result-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 8px;
+}
+
 .result-current {
     display: flex;
     align-items: center;
