@@ -3,6 +3,7 @@ import { getSolarWatch } from "../apiClient";
 import { useAuth } from "../context/AuthContext.jsx";
 import SunArc from "../components/SunArc.jsx";
 import WeatherIcon from "../components/WeatherIcon.jsx";
+import CityMap from "../components/CityMap.jsx";
 
 function SolarWatchPage() {
     const [city, setCity] = useState("");
@@ -86,7 +87,15 @@ function SolarWatchPage() {
                             </div>
                         </div>
 
-                                                {weather && (
+                        {result.latitude != null && (
+                            <CityMap
+                                latitude={result.latitude}
+                                longitude={result.longitude}
+                                label={`${result.city}, ${result.country}`}
+                            />
+                        )}
+
+                        {weather && (
                             <>
                                 <p className="result-label">Right now</p>
                                 <div className="result-current">
