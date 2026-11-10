@@ -11,6 +11,9 @@ public record SolarWatchResponse(
         String sunsetUtc,
         String sunriseLocal,
         String sunsetLocal,
-        WeatherInfo weather
+        WeatherInfo weather,
+        double latitude,
+        double longitude
+
 ) {
 }

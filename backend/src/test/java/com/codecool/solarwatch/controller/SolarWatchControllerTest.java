@@ -43,7 +43,7 @@ class SolarWatchControllerTest {
         WeatherInfo weather = new WeatherInfo(21.5, 20.8, "clear sky", "01d", 55, 3.1);
         SolarWatchResponse response = new SolarWatchResponse(
                 "Budapest", "HU", "2026-08-09",
-                "04:12:00", "18:45:00", "06:12:00", "20:45:00", weather);
+                "04:12:00", "18:45:00", "06:12:00", "20:45:00", weather, 47.4979, 19.0402);
 
         when(solarWatchService.getSolarWatch(eq("Budapest"), eq(LocalDate.of(2026, 8, 9)), any()))
                 .thenReturn(response);

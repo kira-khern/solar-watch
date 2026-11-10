@@ -54,7 +54,9 @@ public class SolarWatchService {
                 sunsetUtc,
                 sunriseLocal,
                 sunsetLocal,
-                weather
+                weather,
+                city.getLatitude(),
+                city.getLongitude()
         );
     }
 
