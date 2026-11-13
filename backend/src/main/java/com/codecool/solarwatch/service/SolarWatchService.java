@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -26,11 +27,11 @@ public class SolarWatchService {
         this.weatherService = weatherService;
     }
 
-    public SolarWatchResponse getSolarWatch(String cityName, LocalDate date, String timezone){
+    public SolarWatchResponse getSolarWatch(String cityName, LocalDate date, String timezone) {
         return buildResponse(geocodingService.getCity(cityName), date, timezone);
     }
 
-    public SolarWatchResponse getSolarWatchByCoordinates(double latitude, double longitude, LocalDate date, String timezone){
+    public SolarWatchResponse getSolarWatchByCoordinates(double latitude, double longitude, LocalDate date, String timezone) {
         return buildResponse(geocodingService.getCityByCoordinates(latitude, longitude), date, timezone);
     }
 
@@ -44,14 +45,19 @@ public class SolarWatchService {
         String sunriseLocal = sunriseUtc;
         String sunsetLocal = sunsetUtc;
 
+        ZoneId zoneId = null;
         if (timezone != null && !timezone.isBlank()) {
             try {
-                ZoneId zoneId = ZoneId.of(timezone);
-                sunriseLocal = toZone(sunTimes.sunriseUtc(), zoneId);
-                sunsetLocal = toZone(sunTimes.sunsetUtc(), zoneId);
+                zoneId = ZoneId.of(timezone);
             } catch (Exception ex) {
             }
         }
+            if (zoneId == null) {
+                zoneId = ZoneOffset.ofTotalSeconds(weather.utcOffsetSeconds());
+            }
+            sunriseLocal = toZone(sunTimes.sunriseUtc(), zoneId);
+            sunsetLocal = toZone(sunTimes.sunsetUtc(), zoneId);
+
 
         return new SolarWatchResponse(
                 city.getName(),

@@ -9,7 +9,8 @@ import java.util.List;
 public record OpenWeatherCurrentResponse(
         List<WeatherCondition> weather,
         Main main,
-        Wind wind
+        Wind wind,
+        int timezone
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record WeatherCondition(

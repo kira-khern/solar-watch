@@ -44,7 +44,8 @@ public class WeatherService {
                 condition.description(),
                 condition.icon(),
                 response.main().humidity(),
-                windSpeed
+                windSpeed,
+                response.timezone()
         );
     }
 
