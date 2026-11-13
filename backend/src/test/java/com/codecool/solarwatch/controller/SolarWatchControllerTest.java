@@ -75,4 +75,24 @@ class SolarWatchControllerTest {
                         .param("city", "Budapest"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void getSolarWatchByCoordinates_returns200AndBody_onValidRequest() throws Exception {
+        WeatherInfo weather = new WeatherInfo(21.5, 20.8, "clear sky", "01d", 55, 3.1);
+        SolarWatchResponse response = new SolarWatchResponse(
+                "Budapest", "HU", "2026-08-09",
+                "04:12:00", "18:45:00", "06:12:00", "20:45:00", weather,
+                47.4979, 19.0402);
+
+        when(solarWatchService.getSolarWatchByCoordinates(eq(47.5), eq(19.0), eq(LocalDate.of(2026, 8, 9)), any()))
+                .thenReturn(response);
+
+        mockMvc.perform(get("/api/solarwatch/by-coordinates")
+                        .param("lat", "47.5")
+                        .param("lon", "19.0")
+                        .param("date", "2026-08-09"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.city").value("Budapest"))
+                .andExpect(jsonPath("$.latitude").value(47.4979));
+    }
 }

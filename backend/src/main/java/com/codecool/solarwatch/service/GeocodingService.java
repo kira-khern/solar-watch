@@ -3,6 +3,7 @@ package com.codecool.solarwatch.service;
 import com.codecool.solarwatch.dto.city.CityCoordinates;
 import com.codecool.solarwatch.dto.city.GeocodingApiResult;
 import com.codecool.solarwatch.exception.CityNotFoundException;
+import com.codecool.solarwatch.exception.NoCityNearPointException;
 import com.codecool.solarwatch.model.City;
 import com.codecool.solarwatch.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,30 @@ public class GeocodingService {
     public CityCoordinates getCoordinates(String cityName) {
         City city = getCity(cityName);
         return new CityCoordinates(city.getName(), city.getCountry(), city.getLatitude(), city.getLongitude());
+    }
+
+    public City getCityByCoordinates(double latitude, double longitude){
+        List<GeocodingApiResult> results = geocodingWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/geo/1.0/reverse")
+                        .queryParam("lat", latitude)
+                        .queryParam("lon", longitude)
+                        .queryParam("limit", 1)
+                        .queryParam("appid", apiKey)
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GeocodingApiResult>>() {
+                })
+                .block();
+
+        if(results == null || results.isEmpty()){
+            throw new NoCityNearPointException(latitude,longitude);
+        }
+
+        GeocodingApiResult result = results.get(0);
+        return cityRepository.findByName(result.name())
+                .orElseGet(() -> cityRepository.save(
+                        new City(null, result.name(), result.country(), result.lat(), result.lon(), result.state())));
     }
 
     private City fetchAndSaveCity(String cityName) {

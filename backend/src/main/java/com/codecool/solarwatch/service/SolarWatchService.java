@@ -26,8 +26,15 @@ public class SolarWatchService {
         this.weatherService = weatherService;
     }
 
-    public SolarWatchResponse getSolarWatch(String cityName, LocalDate date, String timezone) {
-        City city = geocodingService.getCity(cityName);
+    public SolarWatchResponse getSolarWatch(String cityName, LocalDate date, String timezone){
+        return buildResponse(geocodingService.getCity(cityName), date, timezone);
+    }
+
+    public SolarWatchResponse getSolarWatchByCoordinates(double latitude, double longitude, LocalDate date, String timezone){
+        return buildResponse(geocodingService.getCityByCoordinates(latitude, longitude), date, timezone);
+    }
+
+    public SolarWatchResponse buildResponse(City city, LocalDate date, String timezone) {
         SunTimes sunTimes = sunriseSunsetService.getSunTimes(city, date);
         WeatherInfo weather = weatherService.getCurrentWeatherInfo(city);
 

@@ -41,6 +41,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Missing required parameter: " + ex.getParameterName());
     }
 
+    @ExceptionHandler(NoCityNearPointException.class)
+    public ResponseEntity<Map<String, Object>> handleNoCityNearPoint(NoCityNearPointException ex){
+        logger.warn("No city near point: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     @ExceptionHandler(ExternalApiException.class)
     public ResponseEntity<Map<String, Object>> handleExternalApi(ExternalApiException ex) {
         logger.error("Upstream API failure: {}", ex.getMessage(), ex);

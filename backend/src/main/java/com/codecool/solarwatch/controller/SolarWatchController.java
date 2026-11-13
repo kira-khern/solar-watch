@@ -27,8 +27,17 @@ public class SolarWatchController {
             @RequestParam String city,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) String timezone) {
-
         logger.info("Received request for city='{}', date='{}', timezone='{}'", city, date, timezone);
         return solarWatchService.getSolarWatch(city, date, timezone);
+    }
+
+    @GetMapping("/api/solarwatch/by-coordinates")
+    public SolarWatchResponse getSolarWatchByCoordinates(
+            @RequestParam double lat,
+            @RequestParam double lon,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) String timezone){
+        logger.info("Received request for lat={}, lon={}, date='{}'", lat, lon, date);
+        return solarWatchService.getSolarWatchByCoordinates(lat,lon,date,timezone);
     }
 }
