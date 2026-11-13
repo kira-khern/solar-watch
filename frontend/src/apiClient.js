@@ -38,3 +38,8 @@ export function getSolarWatch(city, date, token) {
     const params = new URLSearchParams({ city, date });
     return request(`/api/solarwatch?${params}`, { token });
 }
+
+export function getSolarWatchByCoordinates(lat, lon, date, token){
+    const params = new URLSearchParams({ lat,lon,date});
+    return request(`/api/solarwatch/by-coordinates?${params}`, { token });
+}

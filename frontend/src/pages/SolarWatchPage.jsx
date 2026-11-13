@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { getSolarWatch } from "../apiClient";
+import { getSolarWatch, getSolarWatchByCoordinates } from "../apiClient";
 import { useAuth } from "../context/AuthContext.jsx";
+import CityMap from "../components/CityMap.jsx";
 import SunArc from "../components/SunArc.jsx";
 import WeatherIcon from "../components/WeatherIcon.jsx";
-import CityMap from "../components/CityMap.jsx";
 
 function SolarWatchPage() {
     const [city, setCity] = useState("");
@@ -14,15 +14,14 @@ function SolarWatchPage() {
 
     const { logout, token } = useAuth();
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+    async function runSearch(fetchData) {
         setError(null);
-        setResult(null);
         setIsLoading(true);
 
         try {
-            const data = await getSolarWatch(city, date, token);
+            const data = await fetchData();
             setResult(data);
+            setCity(data.city);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -30,8 +29,17 @@ function SolarWatchPage() {
         }
     }
 
-    const todayStr = new Date().toISOString().split("T")[0];
+    function handleSubmit(event) {
+        event.preventDefault();
+        runSearch(() => getSolarWatch(city, date, token));
+    }
 
+    function handleMapClick(lat, lon) {
+        if (isLoading) return;
+        runSearch(() => getSolarWatchByCoordinates(lat, lon, date, token));
+    }
+
+    const todayStr = new Date().toISOString().split("T")[0];
     const weather = result?.date === todayStr ? result?.weather : null;
 
     return (
@@ -43,7 +51,9 @@ function SolarWatchPage() {
                         Log out
                     </button>
                 </div>
-                <p className="subtitle">Find the sunrise, sunset for any city and date, plus live weather for today.</p>
+                <p className="subtitle">
+                    Find the sunrise and sunset for any city and date, plus live weather for today.
+                </p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -69,31 +79,31 @@ function SolarWatchPage() {
                         />
                     </div>
 
-                    {error && <p className="error-text">{error}</p>}
-
                     <button type="submit" className="btn" disabled={isLoading}>
                         {isLoading ? "Searching..." : "Get sunrise & sunset"}
                     </button>
                 </form>
 
+                <hr className="divider" />
+
+                <CityMap
+                    latitude={result?.latitude}
+                    longitude={result?.longitude}
+                    label={result ? `${result.city}, ${result.country}` : ""}
+                    onMapClick={handleMapClick}
+                />
+                <p className="map-hint">Tip: click anywhere on the map to look up the nearest city.</p>
+
+                {error && <p className="error-text">{error}</p>}
+
                 {result && (
                     <>
-                        <hr className="divider" />
-
                         <div className="result-header">
                             <div className="result-location">
                                 <h2>{result.city}, {result.country}</h2>
                                 <p className="subtitle">{result.date}</p>
                             </div>
                         </div>
-
-                        {result.latitude != null && (
-                            <CityMap
-                                latitude={result.latitude}
-                                longitude={result.longitude}
-                                label={`${result.city}, ${result.country}`}
-                            />
-                        )}
 
                         {weather && (
                             <>

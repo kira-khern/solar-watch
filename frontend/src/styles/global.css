@@ -445,3 +445,13 @@ hr.divider {
     height: 200px;
     width: 100%;
 }
+
+.map-hint {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin: -10px 0 16px;
+}
+
+.city-map .leaflet-container {
+    cursor: crosshair;
+}
